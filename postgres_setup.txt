@@ -1,0 +1,19 @@
+
+// Make the user that will be the owner of the Database for the project
+CREATE ROLE backstitch WITH LOGIN SUPERUSER PASSWORD 'Backstitch2022';
+
+// Make the database for this project
+CREATE DATABASE rss_feed OWNER=backstitch;
+
+// For most of the rest of these make sure you log in as backstitch into the rss_feed database
+
+// Make the User table
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    firstname VARCHAR (50) NOT NULL,
+    lastname VARCHAR (50) not NULL,
+    email VARCHAR (100) NOT NULL,
+    password VARCHAR (200) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    CONSTRAINT unique_email UNIQUE (email)
+);
