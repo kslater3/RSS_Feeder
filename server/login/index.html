@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login</title>
+
+    <link rel="stylesheet" href="login.css"></link>
+
+    <script src="login.js"></script>
+</head>
+<body>
+    <div id="root">
+        <div id="login_container">
+            <h3>Login</h3>
+
+            <div class="input_container">
+                Email:<br/>
+                <input type="email" id="login_email"></input>
+            </div>
+
+            <div class="input_container">
+                Password:<br/>
+                <input type="password" id="login_password"></input>
+            </div>
+
+            <button onclick="login()">Login</button>
+        </div>
+
+        <div id="register_container">
+            <h3>Register</h3>
+
+            <div class="input_container">
+                First Name:<br/>
+                <input type="text" id="register_firstname"></input>
+            </div>
+
+            <div class="input_container">
+                Last Name:<br/>
+                <input type="text" id="register_lastname"></input>
+            </div>
+
+            <div class="input_container">
+                Email:<br/>
+                <input type="email" id="register_email"></input>
+            </div>
+
+            <div class="input_container">
+                Password:<br/>
+                <input type="password" id="register_password"></input>
+            </div>
+
+            <div>
+                Retype Password:<br/>
+                <input type="password" id="register_password2"></input>
+            </div>
+
+            <button onclick="register()">Register</button>
+        </div>
+    </div>
+</body>
+</html>
