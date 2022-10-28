@@ -1,0 +1,63 @@
+
+#root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#header_container {
+    width: 80%;
+    height: 75px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+
+#plus_icon {
+    max-width: 50px;
+    max-height: 50px;
+
+    margin-right: 50px;
+}
+
+#plus_icon:hover {
+    max-width: 53px;
+    max-height: 53px;
+
+    cursor: pointer;
+}
+
+
+#logout_button {
+    width: 75px;
+    height: 45px;
+
+    margin-left: 50px;
+
+    background-color: #ddd;
+
+    border-radius: 3px;
+    box-shadow: -2px 2px 3px #aaa;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#logout_button:hover {
+    width: 78px;
+    height: 43px;
+
+    background-color: #ccc;
+
+    cursor: pointer;
+}
+
+
+#content_container {
+    width: 95%;
+}
