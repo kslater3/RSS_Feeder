@@ -3,11 +3,14 @@ var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 const session = require('express-session');
+
 const bcrypt = require('bcrypt');
+
 require('dotenv').config()
 
 var app = express();
 const port = 3000;
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -28,7 +31,8 @@ const pgClient = new Client(pgObject);
 pgClient.connect();
 
 const sessionStore = new (require('connect-pg-simple')(session))({
-    pgObject
+    conObject: pgObject,
+    createTableIfMissing: true
 });
 
 app.use(session({
@@ -49,7 +53,9 @@ app.post('/register', async (req, res) => {
     const {firstname, lastname, email, password} = req.body;
 
     if(firstname == null || lastname == null || email == null || password == null) {
-        return res.sendStatus(403);
+        res.sendStatus(403);
+
+        return;
     }
 
     try {
@@ -62,6 +68,8 @@ app.post('/register', async (req, res) => {
 
         if (results.rows.length === 0) {
             res.sendStatus(403);
+
+            return;
         }
 
         const user = results.rows[0];
@@ -74,7 +82,7 @@ app.post('/register', async (req, res) => {
         };
 
         res.status(200);
-        return res.json({ user: req.session.user });
+        res.json({ user: req.session.user });
     }catch(e) {
         console.error(e);
 
@@ -87,7 +95,9 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     if(email == null || password == null) {
-        return res.sendStatus(403);
+        res.sendStatus(403);
+
+        return;
     }
 
     try {
@@ -97,13 +107,17 @@ app.post('/login', async (req, res) => {
         );
 
         if (results.rows.length === 0) {
-            return res.sendStatus(403);
+            res.sendStatus(403);
+
+            return;
         }
         const user = results.rows[0];
 
         const matches = bcrypt.compareSync(password, user.password)
         if (!matches) {
-            return res.sendStatus(403);
+            res.sendStatus(403);
+
+            return;
         }
 
         req.session.user = {
@@ -114,11 +128,11 @@ app.post('/login', async (req, res) => {
         }
 
         res.status(200);
-        return res.json({ user: req.session.user });
+        res.json({ user: req.session.user });
     }catch(e) {
         console.error(e);
 
-        return res.sendStatus(403);
+        res.sendStatus(403);
     }
 });
 
@@ -127,11 +141,11 @@ app.post('/logout', async (req, res) => {
     try {
         await req.session.destroy();
 
-        return res.sendStatus(200);
+        res.sendStatus(200);
     } catch (e) {
         console.error(e);
 
-        return res.sendStatus(500);
+        res.sendStatus(500);
     }
 });
 
@@ -170,10 +184,10 @@ app.get('/', (req, res) => {
     // If you have an Active Session, send the Angular App
     if (req.sessionID && req.session.user) {
         res.sendFile(path.join(__dirname, 'app', 'index.html'));
+    }else {
+        // If you don't have an active session, redirect to the login page
+        res.sendFile(path.join(__dirname, 'login', 'index.html'));
     }
-
-    // If you don't have an active session, redirect to the login page
-    res.sendFile(path.join(__dirname, 'login', 'index.html'));
 });
 
 
@@ -190,7 +204,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.send('error');
+  res.send(err);
 });
 
 

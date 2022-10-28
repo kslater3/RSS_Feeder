@@ -5,6 +5,8 @@
 
     <title>Login</title>
 
+    <link rel="icon" href="favicon.ico">
+
     <link rel="stylesheet" href="login.css"></link>
 
     <script src="login.js"></script>
@@ -14,14 +16,17 @@
         <div id="login_container">
             <h3>Login</h3>
 
+            <div id="login_error_div" class="error_div">
+            </div>
+
             <div class="input_container">
                 Email:<br/>
-                <input type="email" id="login_email"></input>
+                <input type="email" id="login_email" required></input>
             </div>
 
             <div class="input_container">
                 Password:<br/>
-                <input type="password" id="login_password"></input>
+                <input type="password" id="login_password" required></input>
             </div>
 
             <button onclick="login()">Login</button>
@@ -30,29 +35,32 @@
         <div id="register_container">
             <h3>Register</h3>
 
+            <div id="register_error_div" class="error_div">
+            </div>
+
             <div class="input_container">
                 First Name:<br/>
-                <input type="text" id="register_firstname"></input>
+                <input type="text" id="register_firstname" required></input>
             </div>
 
             <div class="input_container">
                 Last Name:<br/>
-                <input type="text" id="register_lastname"></input>
+                <input type="text" id="register_lastname" required></input>
             </div>
 
             <div class="input_container">
                 Email:<br/>
-                <input type="email" id="register_email"></input>
+                <input type="email" id="register_email" required></input>
             </div>
 
             <div class="input_container">
                 Password:<br/>
-                <input type="password" id="register_password"></input>
+                <input type="password" id="register_password" required></input>
             </div>
 
             <div>
                 Retype Password:<br/>
-                <input type="password" id="register_password2"></input>
+                <input type="password" id="register_password2" required></input>
             </div>
 
             <button onclick="register()">Register</button>
