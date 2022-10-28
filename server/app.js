@@ -12,6 +12,13 @@ var app = express();
 const port = 3000;
 
 
+// Chrome won't redirect after login and logout without sending a "new" document everytime
+app.get('/*', function(req, res, next){
+  res.setHeader('Last-Modified', (new Date()).toUTCString());
+  next();
+});
+
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -101,7 +108,7 @@ app.post('/login', async (req, res) => {
     }
 
     try {
-        const results = await client.query(
+        const results = await pgClient.query(
             'SELECT id, firstname, lastname, email, password FROM users WHERE email = $1',
             [email]
         );
@@ -124,11 +131,13 @@ app.post('/login', async (req, res) => {
             id: user.id,
             firstname: user.firstname,
             lastname: user.lastname,
-            email: user.email,
+            email: user.email
         }
 
-        res.status(200);
-        res.json({ user: req.session.user });
+        req.session.save(() => {
+            res.status(200);
+            res.send('');
+        });
     }catch(e) {
         console.error(e);
 
@@ -141,7 +150,8 @@ app.post('/logout', async (req, res) => {
     try {
         await req.session.destroy();
 
-        res.sendStatus(200);
+        res.status(200);
+        res.send('');
     } catch (e) {
         console.error(e);
 
@@ -180,14 +190,18 @@ app.get('/styles.*.css', (req, res) => {
 });
 
 
-app.get('/', (req, res) => {
+
+app.get('/app', (req, res, next) => {
     // If you have an Active Session, send the Angular App
     if (req.sessionID && req.session.user) {
         res.sendFile(path.join(__dirname, 'app', 'index.html'));
     }else {
-        // If you don't have an active session, redirect to the login page
-        res.sendFile(path.join(__dirname, 'login', 'index.html'));
+        res.sendStatus(403);
     }
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login', 'index.html'));
 });
 
 

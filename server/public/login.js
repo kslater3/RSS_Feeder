@@ -30,7 +30,7 @@ async function post(path, body) {
 
 
     try {
-        const response = await fetch('http://localhost:3000' + path, {
+        const response = await fetch(path, {
             method: 'POST',
 
             headers: {
@@ -48,6 +48,9 @@ async function post(path, body) {
             }else {
                 login_error_div.innerHTML = 'Email or Password is Incorrect';
             }
+        }else {
+            // Browser does not like to redirect after log in
+            location.href = location.origin + '/app';
         }
     }catch(e) {
         if(path == '/register') {
@@ -55,6 +58,8 @@ async function post(path, body) {
         }else {
             login_error_div.innerHTML = e.message;
         }
+
+        console.error(e);
     }
 }
 
