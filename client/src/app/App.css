@@ -58,8 +58,8 @@
 }
 
 
-#content_container {
-    width: 95%;
+#feed_container {
+    max-width: 90%;
 
     margin: auto;
 }

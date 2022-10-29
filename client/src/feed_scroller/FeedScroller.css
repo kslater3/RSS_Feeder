@@ -1,3 +1,9 @@
+
+#FeedScroller_Base {
+    max-width: 80%; 
+}
+
+
 .domain_container {
     border: 1px solid black;
 
@@ -6,20 +12,17 @@
 
 
 .sidescroller {
-    height: 315px;
-
-    white-space: nowrap;
+    max-height: 80%;
 
     margin-top: 10px;
     margin-bottom: 10px;
 
-    overflow-y: hidden;
-    overflow-x: auto;
+    overflow-y: auto;
 }
 
 
 .feed_wrapper {
-    display: inline-block;
+    marign-bottom: 15px;
 
-    white-space: normal;
+    border: 1px solid black;
 }

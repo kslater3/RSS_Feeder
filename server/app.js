@@ -5,6 +5,9 @@ var logger = require('morgan');
 const session = require('express-session');
 const cors = require('cors');
 
+const fetch = require('node-fetch');
+//const request = require('request');
+
 const bcrypt = require('bcrypt');
 
 require('dotenv').config()
@@ -13,12 +16,7 @@ var app = express();
 const port = 3000;
 
 
-app.use(
-    cors({
-        origin: '*',
-        methods: ['GET']
-    })
-);
+app.use(cors());
 
 
 // Chrome won't redirect after login and logout without sending a "new" document everytime
@@ -162,6 +160,38 @@ app.post('/logout', async (req, res) => {
         res.status(200);
         res.send('');
     } catch (e) {
+        console.error(e);
+
+        res.sendStatus(500);
+    }
+});
+
+
+app.get('/corsproxy/*', cors(), async (req, res) => {
+    let proxyString = '/corsproxy/'
+    let unproxyURL = req.path.substring(proxyString.length);
+
+    try {
+        let proxyResponse = await fetch(unproxyURL);
+
+        let body = await proxyResponse.text();
+
+        res.send(body);
+
+        /*
+        request({url: unproxyURL}, (err, response, body) => {
+            if (err || response.statusCode !== 200) {
+                return res.status(500).json({
+                    type: 'error',
+                    message: err.message
+                });
+            }
+
+            res.set('Content-Type', 'application/rss+xml');
+            res.send(Buffer.from(body));
+        });
+        */
+    }catch(e) {
         console.error(e);
 
         res.sendStatus(500);
