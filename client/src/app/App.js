@@ -34,7 +34,7 @@ function App(props) {
 
 
     return (
-        <div id="root">
+        <div id="App_Base">
             <div id="header_container">
                 <img
                     src="images/plus_icon.png"

@@ -32,7 +32,7 @@ function FeedScroller(props) {
 
 
     return (
-        <div id="root">
+        <div id="FeedScroller_Base">
             <div>
                 <button onClick={fetchReddit}>Reddit RSS</button>
             </div>
