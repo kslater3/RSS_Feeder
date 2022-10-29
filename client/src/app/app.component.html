@@ -1,12 +1,21 @@
 
 <div id="root">
     <div id="header_container">
-        <img src="images/plus_icon.png" id="plus_icon" />
+        <img
+            src="images/plus_icon.png"
+            id="plus_icon"
+            (click)="addLink()"
+        />
 
-        <div (click)="logout()" id="logout_button">Logout</div>
+        <div
+            id="logout_button"
+            (click)="logout()"
+        >
+            Logout
+        </div>
     </div>
 
     <div id="content_container">
-        
+        <app-feed-scroller></app-feed-scroller>
     </div>
 </div>

@@ -1,11 +1,19 @@
 import { Component } from '@angular/core';
 
+import { FeedScrollerComponent } from './feed-scroller/feed-scroller.component';
+
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+    addLink() {
+        console.log("ADD LINK");
+    }
+
 
     async logout() {
         try {
