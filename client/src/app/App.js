@@ -1,6 +1,10 @@
 
 import './App.css';
 
+import FeedScroller from '../feed_scroller/FeedScroller';
+
+//import { RSSParser } from 'rss-parser.min.js';
+
 
 function App(props) {
    function addLink() {
@@ -48,7 +52,7 @@ function App(props) {
             </div>
 
             <div id="content_container">
-                <div>Scroller goes here</div>
+                <FeedScroller></FeedScroller>
             </div>
         </div>
     );
