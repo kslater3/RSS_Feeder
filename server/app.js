@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 const session = require('express-session');
+const cors = require('cors');
 
 const bcrypt = require('bcrypt');
 
@@ -10,6 +11,14 @@ require('dotenv').config()
 
 var app = express();
 const port = 3000;
+
+
+app.use(
+    cors({
+        origin: '*',
+        methods: ['GET']
+    })
+);
 
 
 // Chrome won't redirect after login and logout without sending a "new" document everytime
@@ -161,28 +170,21 @@ app.post('/logout', async (req, res) => {
 
 
 // Delivers the Core of the angular app if you are logged in, other stuff can be put into the public folder
-app.get('/main.*.js', (req, res) => {
+app.get('/static/js/*.js', (req, res) => {
     // If you have an Active Session, send the Angular App
     if (req.sessionID && req.session.user) {
         res.sendFile(path.join(__dirname, 'app') + req.path);
     }
 });
 
-app.get('/runtime.*.js', (req, res) => {
+app.get('/static/css/*.css', (req, res) => {
     // If you have an Active Session, send the Angular App
     if (req.sessionID && req.session.user) {
         res.sendFile(path.join(__dirname, 'app') + req.path);
     }
 });
 
-app.get('/polyfills.*.js', (req, res) => {
-    // If you have an Active Session, send the Angular App
-    if (req.sessionID && req.session.user) {
-        res.sendFile(path.join(__dirname, 'app') + req.path);
-    }
-});
-
-app.get('/styles.*.css', (req, res) => {
+app.get('/*.json', (req, res) => {
     // If you have an Active Session, send the Angular App
     if (req.sessionID && req.session.user) {
         res.sendFile(path.join(__dirname, 'app') + req.path);

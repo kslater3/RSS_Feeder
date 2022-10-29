@@ -1,7 +1,8 @@
 #!/bin/bash
 
-if [ -d "client/dist/client" ] && [ -d "server/app" ]
+if [ -d "client/build" ] && [ -d "server/app" ]
 then
     rm -r server/app/*
-    cp -r client/dist/client/* server/app/
+
+    cp -r client/build/* server/app/
 fi
