@@ -32,20 +32,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')))
 
 
-const { Client } = require('pg')
-const pgObject = {
+const { Pool } = require('pg');
+
+const pgPool = new Pool({
     user: process.env.PG_USER,
     database: process.env.PG_DATABASE,
     password: process.env.PG_PASSWORD,
     host: process.env.PG_HOST,
-    port: process.env.PG_PORT
-}
-
-const pgClient = new Client(pgObject);
-pgClient.connect();
+    port: process.env.PG_PORT,
+    max: process.env.PG_POOLMAX,
+    idleTimeoutMillis: process.env.PG_IDLE_TIMEOUT_MILLIS,
+    connectionTimeoutMillis: process.env.PG_CONNECTION_TIMEOUT_MILLIS
+});
 
 const sessionStore = new (require('connect-pg-simple')(session))({
-    conObject: pgObject,
+    pool: pgPool,
     createTableIfMissing: true
 });
 
@@ -74,6 +75,8 @@ app.post('/register', async (req, res) => {
 
     try {
         const hashedPassword = bcrypt.hashSync(password, 10);
+
+        const pgClient = await pgPool.connect();
 
         const results = await pgClient.query(
             'INSERT INTO users (firstname, lastname, email, password) VALUES ($1, $2, $3, $4) RETURNING *',
@@ -115,6 +118,8 @@ app.post('/login', async (req, res) => {
     }
 
     try {
+        const pgClient = await pgPool.connect();
+
         const results = await pgClient.query(
             'SELECT id, firstname, lastname, email, password FROM users WHERE email = $1',
             [email]
