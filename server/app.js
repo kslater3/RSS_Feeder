@@ -29,7 +29,7 @@ app.get('/*', function(req, res, next){
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 const { Pool } = require('pg');
@@ -83,6 +83,8 @@ app.post('/register', async (req, res) => {
             [firstname, lastname, email, hashedPassword]
         );
 
+        pgClient.release();
+
         if (results.rows.length === 0) {
             res.sendStatus(403);
 
@@ -124,6 +126,8 @@ app.post('/login', async (req, res) => {
             'SELECT id, firstname, lastname, email, password FROM users WHERE email = $1',
             [email]
         );
+
+        pgClient.release();
 
         if (results.rows.length === 0) {
             res.sendStatus(403);
@@ -172,6 +176,20 @@ app.post('/logout', async (req, res) => {
 });
 
 
+app.get('/session', (req, res) => {
+    try {
+        // If you have an Active Session, send the Angular App
+        if (req.sessionID && req.session.user) {
+            res.json(req.session.user);
+        }else {
+            res.sendStatus(403);
+        }
+    }catch(e) {
+        console.error(e);
+    }
+});
+
+
 app.get('/corsproxy/*', cors(), async (req, res) => {
     let proxyString = '/corsproxy/'
     let unproxyURL = req.path.substring(proxyString.length);
@@ -182,26 +200,101 @@ app.get('/corsproxy/*', cors(), async (req, res) => {
         let body = await proxyResponse.text();
 
         res.send(body);
-
-        /*
-        request({url: unproxyURL}, (err, response, body) => {
-            if (err || response.statusCode !== 200) {
-                return res.status(500).json({
-                    type: 'error',
-                    message: err.message
-                });
-            }
-
-            res.set('Content-Type', 'application/rss+xml');
-            res.send(Buffer.from(body));
-        });
-        */
     }catch(e) {
         console.error(e);
 
         res.sendStatus(500);
     }
 });
+
+
+app.post('/link/:uid', async (req, res) => {
+    // If you have an Active Session, send the Angular App
+    if(!req.sessionID && !req.session.user) {
+        res.sendStatus(403);
+
+        return;
+    }
+
+
+    if( !('uid') in req.params ) {
+        res.sendStatus(403);
+
+        return;
+    }
+
+    const {link, label} = req.body;
+
+    if(link == null || label == null) {
+        res.sendStatus(403);
+
+        return;
+    }
+
+
+    const pgClient = await pgPool.connect();
+
+    try {
+        const results = await pgClient.query(
+            'INSERT INTO links (link, label) VALUES ($1, $2) RETURNING *',
+            [link, label]
+        );
+    }catch(e) {
+        // If this link already was added, that is okay we will move on, if something else happend we will kill it
+        // Postgres Error Code 23505 is for the Unique constraint meaning we already have that link, no problem
+        if(e.code !== 23505) {
+            pgClient.release();
+
+            console.error(e);
+
+            res.sendStatus(403);
+
+            return;
+        }
+    }
+
+    if (results.rows.length === 0) {
+        pgClient.release();
+
+        res.sendStatus(403);
+
+        return;
+    }
+
+
+    const newLink = results.rows[0];
+
+    // Now that we know the new link is in the system, let's update the user's link table to associate that link to this user
+    try {
+        const results = await pgClient.query(
+            'INSERT INTO userlinks (linkid, userid) VALUES ($1, $2) RETURNING *',
+            [newLink.id, req.params['uid']]
+        );
+    }catch(e) {
+        pgClient.release();
+
+        console.error(e);
+
+        res.sendStatus(403);
+
+        return;
+    }
+
+
+    if (results.rows.length === 0) {
+        pgClient.release();
+
+        res.sendStatus(403);
+
+        return;
+    }
+
+
+    pgClient.release();
+
+    res.sendStatus(201);
+});
+
 
 
 // Delivers the Core of the angular app if you are logged in, other stuff can be put into the public folder
@@ -260,7 +353,7 @@ app.use(function(err, req, res, next) {
 
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Example app listening on port ${port}`);
 })
 
 

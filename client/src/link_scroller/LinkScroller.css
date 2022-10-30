@@ -1,4 +1,28 @@
 
 #LinkScroller_Base {
-    border: 1px solid black;
+    padding: 5px;
+}
+
+
+.domain_container {
+    background-color: #fff;
+
+    margin-bottom: 5px;
+
+    font-size: 105%;
+
+    text-align: center;
+}
+
+
+.domain_link {
+    margin-bottom: 2px;
+}
+
+.domain_link:hover {
+    font-size: 106%;
+
+    color: #333;
+
+    cursor: pointer;
 }

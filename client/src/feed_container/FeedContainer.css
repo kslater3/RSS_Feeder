@@ -6,14 +6,12 @@
 
 
 #FeedContainer_Base {
-    height: 150px;
-
-    overflow: hidden;
-
     padding: 10px;
 
     display: flex;
+    justify-content: space-evenly;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 
@@ -37,8 +35,8 @@
 }
 
 
-.info_container {
-    flex-grow: 1;
+#info_container {
+    
 }
 
 

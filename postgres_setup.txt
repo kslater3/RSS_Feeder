@@ -17,3 +17,19 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     CONSTRAINT unique_email UNIQUE (email)
 );
+
+// Make the Links table
+// Make the User table
+CREATE TABLE IF NOT EXISTS links (
+    id SERIAL PRIMARY KEY,
+    link VARCHAR (100) UNIQUE NOT NULL,
+    label VARCHAR (100) NOT NULL
+);
+
+// Make the User Links table
+CREATE TABLE IF NOT EXISTS userlinks (
+    id SERIAL PRIMARY KEY,
+    linkid INTEGER REFERENCES links(id) NOT NULL,
+    userid INTEGER REFERENCES users(id) NOT NULL,
+    UNIQUE (linkid, userid)
+);

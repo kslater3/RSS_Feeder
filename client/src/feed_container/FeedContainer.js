@@ -3,32 +3,12 @@ import './FeedContainer.css';
 
 
 
-function extract_img_src(content) {
-    let imgsrc = '';
-
-    if(!content || content.length == 0) {
-        return imgsrc;
-    }
-
-    let imgrx = /<img.*?src="(.*?)"/;
-    let imgmatch = imgrx.exec(content);
-
-    if(imgmatch) {
-        // index 1 contains the group within the "" which is the url for the img
-        imgsrc = imgmatch[1];
-    }
-
-    return imgsrc;
-}
-
-
-
 function FeedContainer(props) {
     let rssImg = (
         <div className="TEMPIMG"></div>
     );
 
-    let imgsrc = extract_img_src(props.item.content);
+    let imgsrc = 'images/rss_icon.png';
 
 
     return (
@@ -38,11 +18,7 @@ function FeedContainer(props) {
                     <img
                         src={imgsrc}
                         className="rss_img"
-                        onError={() => {
-                            return (
-                                {rssImg}
-                            );
-                        }}
+                        alt="No Image"
                     />
                 </div>
 

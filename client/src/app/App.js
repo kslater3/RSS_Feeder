@@ -1,13 +1,151 @@
 
+import { useState, useEffect } from 'react';
+
 import './App.css';
 
 import LinkScroller from '../link_scroller/LinkScroller';
 import FeedScroller from '../feed_scroller/FeedScroller';
 
 
+
+function validate_url(url) {
+    let isValid = false;
+
+    try {
+        let urlObj = new URL(url);
+
+        isValid = true;
+    }catch(e) {
+        isValid = false;
+
+        console.error(e.message);
+    }
+
+    return isValid;
+}
+
+
+function fetchRSS(url) {
+    return new Promise(async (resolve, reject) => {
+        let feed = {};
+
+        if(!validate_url(url)) {
+            reject(new Error('Invalid URL passed to fetchRSS: ' + url));
+
+            return;
+        }
+
+        let parser = new window.RSSParser();
+
+        try {
+            let rssResults = await parser.parseURL(window.location.origin + '/corsproxy/' + url);
+
+            resolve(rssResults);
+        }catch(e) {
+            reject(e);
+
+            return;
+        }
+    });
+}
+
+
+
 function App(props) {
-   function addLink() {
-       console.log("ADD LINK");
+    const [user, setUser] = useState(undefined);
+    const [fetchingUser, setFetchingUser] = useState(true);
+
+    const [linkInput, setLinkInput] = useState('');
+    const [badLink, setBadLink] = useState(false);
+
+    const [linkRecords, setLinkRecords] = useState([
+        {
+            link: 'https://www.reddit.com/.rss',
+
+            label: 'Front Page'
+        },
+
+        {
+            link: 'http://rss.cnn.com/rss/cnn_topstories.rss',
+
+            label: 'Today\'s News'
+        }
+    ]);
+
+    const [currentLink, setCurrentLink] = useState(undefined);
+    const [loadingRSS, setLoadingRSS] = useState(false);
+    const [rssData, setRssData] = useState([]);
+
+
+    useEffect(() => {
+        if(fetchingUser) {
+            setFetchingUser(false);
+
+            fetch('/session').then((response) => {
+                response.json().then((tempUser) => {
+                    if(tempUser) {
+                        setUser({...tempUser});
+                    }
+                }).catch((e) => {
+                    console.error(e.message);
+                });
+            }).catch((e) => {
+                console.error(e.message);
+            });
+        }
+    });
+
+
+   async function addLink() {
+       if(!validate_url(linkInput)) {
+           setBadLink(true);
+
+           return;
+       }
+
+       if(!user) {
+           console.error('SCRIPT ERROR: Cannot Add Link, User is undefined');
+
+           return;
+       }
+
+       let rssResponse = await fetchRSS(linkInput);
+
+       if(rssResponse) {
+           try {
+               let linkPost = fetch('/link/' + user.id, {
+                   method: 'POST',
+
+                   body: JSON.stringify({
+                       link: rssResponse.feedUrl,
+
+                       label: rssResponse.title
+                   })
+               });
+
+               if(linkPost.ok) {
+                   updateRSSData(linkInput);
+               }
+           }catch(e) {
+               console.error(e);
+           }
+
+
+       }
+   }
+
+
+
+   async function updateRSSData(url) {
+       setLoadingRSS(true);
+
+       let tempRssData = await fetchRSS(url);
+
+       if(tempRssData && tempRssData.items) {
+           setRssData({...tempRssData});
+       }
+
+       setLoadingRSS(false);
    }
 
 
@@ -26,7 +164,7 @@ function App(props) {
                window.location.href = window.location.origin;
            }
        }catch(e) {
-           console.error(e);
+           console.error(e.message);
        }
    }
 
@@ -35,6 +173,16 @@ function App(props) {
     return (
         <div id="App_Base">
             <div id="header_container">
+                <div>
+                    <b>RSS Link:</b>
+                    <input
+                        type="text"
+                        onInput={(e) => {
+                            setLinkInput(e.target.value);
+                        }}
+                    ></input>
+                </div>
+
                 <img
                     src="images/plus_icon.png"
                     alt="Img Failed to Load"
@@ -50,14 +198,31 @@ function App(props) {
                 </div>
             </div>
 
+            <div id="link_error_container">
+                <p id="link_error_p">
+                    {badLink &&
+                        "Bad Link"
+                    }
+                </p>
+            </div>
+
 
             <div id="feed_container">
                 <div id="linkscroller_container">
-                    <LinkScroller></LinkScroller>
+                    <LinkScroller
+                        linkRecords={linkRecords}
+
+                        setCurrentLink={(newLink) => {
+                            setCurrentLink({...newLink});
+
+                            updateRSSData(newLink.link);
+                        }}
+                    >
+                    </LinkScroller>
                 </div>
 
                 <div id="feedscroller_container">
-                    <FeedScroller></FeedScroller>
+                    <FeedScroller rssData={rssData}></FeedScroller>
                 </div>
             </div>
         </div>
