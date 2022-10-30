@@ -208,6 +208,62 @@ app.get('/corsproxy/*', cors(), async (req, res) => {
 });
 
 
+
+app.get('/userlinks/:uid', async (req, res) => {
+    // If you have an Active Session, send the Angular App
+    if(!req.sessionID && !req.session.user) {
+        res.sendStatus(403);
+
+        return;
+    }
+
+    if( !('uid') in req.params ) {
+        res.sendStatus(403);
+
+        return;
+    }
+
+
+    const pgClient = await pgPool.connect();
+
+    let results;
+
+    try {
+        results = await pgClient.query(
+            'SELECT l.link, l.label FROM userlinks AS ul INNER JOIN links AS l ON ul.linkid=l.id WHERE ul.userid=$1',
+            [req.params['uid']]
+        );
+    }catch(e) {
+        // If this link already was added, that is okay we will move on, if something else happend we will kill it
+        // Postgres Error Code 23505 is for the Unique constraint meaning we already have that link, no problem
+        if(e.code !== 23505) {
+            pgClient.release();
+
+            console.error(e);
+
+            res.sendStatus(403);
+
+            return;
+        }
+    }
+
+
+    if (!results) {
+        pgClient.release();
+
+        res.sendStatus(403);
+
+        return;
+    }
+
+
+    pgClient.release();
+
+    res.json(results);
+});
+
+
+
 app.post('/link/:uid', async (req, res) => {
     // If you have an Active Session, send the Angular App
     if(!req.sessionID && !req.session.user) {
