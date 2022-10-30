@@ -59,7 +59,17 @@
 
 
 #feed_container {
-    max-width: 90%;
+    width: 95%;
 
     margin: auto;
+}
+
+
+#linkscroller_container {
+    width: 15%;
+}
+
+
+#feedscroller_container {
+    width: 85%;
 }

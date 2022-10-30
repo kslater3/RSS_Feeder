@@ -1,6 +1,7 @@
 
 import './App.css';
 
+import LinkScroller from '../link_scroller/LinkScroller';
 import FeedScroller from '../feed_scroller/FeedScroller';
 
 
@@ -52,7 +53,7 @@ function App(props) {
 
             <div id="feed_container">
                 <div id="linkscroller_container">
-
+                    <LinkScroller></LinkScroller>
                 </div>
 
                 <div id="feedscroller_container">
