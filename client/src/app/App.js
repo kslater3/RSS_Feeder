@@ -71,6 +71,8 @@ function App(props) {
             label: 'Today\'s News'
         }
     ]);
+    const [fetchingLinkRecords, setFetchingLinkRecords] = useState(false); // for running only once
+    const [loadingLinkRecords, setLoadingLinkRecords] = useState(true); // Still loading when initializing
 
     const [currentLink, setCurrentLink] = useState(undefined);
     const [loadingRSS, setLoadingRSS] = useState(false);
@@ -85,6 +87,27 @@ function App(props) {
                 response.json().then((tempUser) => {
                     if(tempUser) {
                         setUser({...tempUser});
+                    }
+
+                    setFetchingLinkRecords(true);
+                }).catch((e) => {
+                    console.error(e.message);
+                });
+            }).catch((e) => {
+                console.error(e.message);
+            });
+        }
+    });
+
+
+    useEffect(() => {
+        if(fetchingLinkRecords) {
+            setFetchingLinkRecords(false);
+
+            fetch('/userlinks/' + user.id).then((response) => {
+                response.json().then((tempLinks) => {
+                    if(tempLinks && tempLinks.rows.length) {
+                        setLinkRecords(tempLinks.rows);
                     }
                 }).catch((e) => {
                     console.error(e.message);
