@@ -113,8 +113,12 @@ function App(props) {
 
        if(rssResponse) {
            try {
-               let linkPost = fetch('/link/' + user.id, {
+               let linkPost = await fetch('/link/' + user.id, {
                    method: 'POST',
+
+                   headers: {
+                       'Content-Type': 'application/json'
+                   },
 
                    body: JSON.stringify({
                        link: rssResponse.feedUrl,

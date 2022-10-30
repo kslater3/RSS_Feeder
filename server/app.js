@@ -216,7 +216,6 @@ app.post('/link/:uid', async (req, res) => {
         return;
     }
 
-
     if( !('uid') in req.params ) {
         res.sendStatus(403);
 
@@ -234,8 +233,10 @@ app.post('/link/:uid', async (req, res) => {
 
     const pgClient = await pgPool.connect();
 
+    let results;
+
     try {
-        const results = await pgClient.query(
+        results = await pgClient.query(
             'INSERT INTO links (link, label) VALUES ($1, $2) RETURNING *',
             [link, label]
         );
@@ -251,48 +252,61 @@ app.post('/link/:uid', async (req, res) => {
 
             return;
         }
+    } finally {
+        // In this case I hit the unique error on the link, so now I will go query it so I can get its id
+        if (!results || results.rows.length === 0) {
+            try {
+                results = await pgClient.query(
+                    'SELECT id FROM links WHERE link=$1',
+                    [link]
+                );
+            }catch(e) {
+                // If this link already was added, that is okay we will move on, if something else happend we will kill it
+                // Postgres Error Code 23505 is for the Unique constraint meaning we already have that link, no problem
+                if(e.code !== 23505) {
+                    pgClient.release();
+
+                    console.error(e);
+
+                    res.sendStatus(403);
+
+                    return;
+                }
+            }
+        }
+
+
+        const newLink = results.rows[0];
+
+        // Now that we know the new link is in the system, let's update the user's link table to associate that link to this user
+        try {
+            results = await pgClient.query(
+                'INSERT INTO userlinks (linkid, userid) VALUES ($1, $2) RETURNING *',
+                [newLink.id, req.params['uid']]
+            );
+        }catch(e) {
+            pgClient.release();
+
+            console.error(e);
+
+            res.sendStatus(403);
+
+            return;
+        } finally {
+            if (!results || results.rows.length === 0) {
+                pgClient.release();
+
+                res.sendStatus(403);
+
+                return;
+            }
+
+
+            pgClient.release();
+
+            res.sendStatus(201);
+        }
     }
-
-    if (results.rows.length === 0) {
-        pgClient.release();
-
-        res.sendStatus(403);
-
-        return;
-    }
-
-
-    const newLink = results.rows[0];
-
-    // Now that we know the new link is in the system, let's update the user's link table to associate that link to this user
-    try {
-        const results = await pgClient.query(
-            'INSERT INTO userlinks (linkid, userid) VALUES ($1, $2) RETURNING *',
-            [newLink.id, req.params['uid']]
-        );
-    }catch(e) {
-        pgClient.release();
-
-        console.error(e);
-
-        res.sendStatus(403);
-
-        return;
-    }
-
-
-    if (results.rows.length === 0) {
-        pgClient.release();
-
-        res.sendStatus(403);
-
-        return;
-    }
-
-
-    pgClient.release();
-
-    res.sendStatus(201);
 });
 
 
