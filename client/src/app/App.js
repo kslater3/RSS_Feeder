@@ -132,7 +132,7 @@ function App(props) {
                    },
 
                    body: JSON.stringify({
-                       link: rssResponse.feedUrl,
+                       link: linkInput,
 
                        label: rssResponse.title
                    })
@@ -140,6 +140,8 @@ function App(props) {
 
                if(linkPost.ok) {
                    updateRSSData(linkInput);
+
+                   setLinkInput('');
 
                    setFetchingLinkRecords(true);
                }

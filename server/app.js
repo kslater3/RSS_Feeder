@@ -286,7 +286,6 @@ app.post('/link/:uid', async (req, res) => {
         return;
     }
 
-
     const pgClient = await pgPool.connect();
 
     let results;
@@ -309,6 +308,7 @@ app.post('/link/:uid', async (req, res) => {
             return;
         }
     } finally {
+
         // In this case I hit the unique error on the link, so now I will go query it so I can get its id
         if (!results || results.rows.length === 0) {
             try {
@@ -331,7 +331,7 @@ app.post('/link/:uid', async (req, res) => {
             }
         }
 
-
+console.log(results);
         const newLink = results.rows[0];
 
         // Now that we know the new link is in the system, let's update the user's link table to associate that link to this user
