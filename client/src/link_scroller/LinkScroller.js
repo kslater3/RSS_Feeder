@@ -22,11 +22,12 @@ function extract_domain(url) {
 
 function groupDomains(linkRecords) {
     let domainGroups = {};
+    let domain;
 
     for(let i = 0; i < linkRecords.length; i++) {
-        let domain = extract_domain(linkRecords[i].link);
+        domain = extract_domain(linkRecords[i].link);
 
-        if( !(domain in Object.keys(domainGroups)) ) {
+        if(!domainGroups.hasOwnProperty(domain)) {
             domainGroups[domain] = [];
         }
 

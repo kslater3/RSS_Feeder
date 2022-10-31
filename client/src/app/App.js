@@ -58,19 +58,7 @@ function App(props) {
     const [linkInput, setLinkInput] = useState('');
     const [badLink, setBadLink] = useState(false);
 
-    const [linkRecords, setLinkRecords] = useState([
-        {
-            link: 'https://www.reddit.com/.rss',
-
-            label: 'Front Page'
-        },
-
-        {
-            link: 'http://rss.cnn.com/rss/cnn_topstories.rss',
-
-            label: 'Today\'s News'
-        }
-    ]);
+    const [linkRecords, setLinkRecords] = useState([]);
     const [fetchingLinkRecords, setFetchingLinkRecords] = useState(false); // for running only once
     const [loadingLinkRecords, setLoadingLinkRecords] = useState(true); // Still loading when initializing
 
@@ -152,6 +140,8 @@ function App(props) {
 
                if(linkPost.ok) {
                    updateRSSData(linkInput);
+
+                   setFetchingLinkRecords(true);
                }
            }catch(e) {
                console.error(e);
