@@ -42,3 +42,20 @@
 
     background-color: #fff;
 }
+
+
+.article_container {
+    max-width: 90%;
+    max-height: 800px;
+
+    margin-top: 50px;
+    margin-bottom: 50px;
+
+    overflow: auto;
+
+    background-color: #fff;
+}
+
+.article_container:empty {
+    display: none;
+}

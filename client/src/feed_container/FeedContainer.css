@@ -1,45 +1,48 @@
 
-#FeedContainer_Link {
-    text-decoration: none;
-    color: black;
+#FeedContainer_Base {
+    padding: 10px;
 }
 
 
-#FeedContainer_Base {
-    padding: 10px;
-
+.buttons_container {
     display: flex;
     justify-content: space-evenly;
-    align-items: center;
     flex-wrap: wrap;
 }
 
 
-.TEMPIMG {
-    width: 125px;
-    height: 125px;
+.external_link_icon {
+    width: 25px;
+    height: 25px;
+}
 
-    background-color: #d33;
-
-    margin: auto;
+.external_link_icon:hover {
+    width: 28px;
+    height: 28px;
 }
 
 
-.img_container {
-    margin-right: 15px;
+.read_button {
+    width: 150px;
+    height: 30px;
+
+    background-color: #ddd;
+
+    border-radius: 3px;
+
+    font-size: 105%;
+    font-style: italic;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.rss_img {
-    width: 100px;
-    height: 100px;
-}
+.read_button:hover {
+    width: 152px;
+    height: 32px;
 
+    background-color: #ccc;
 
-#info_container {
-    
-}
-
-
-.detail_container {
-    margin-bottom: 5px;
+    cursor: pointer;
 }

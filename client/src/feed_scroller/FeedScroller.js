@@ -32,13 +32,28 @@ function ConditionalScroller(props) {
 
 
 function FeedScroller(props) {
+    const [displayArticle, setDisplayArticle] = useState('');
+
     let stubs = [];
 
     if(props.rssData && props.rssData.items) {
         stubs = props.rssData.items.map((entry) => {
             return (
                 <div className="feed_wrapper">
-                    <FeedContainer item={entry}></FeedContainer>
+                    <FeedContainer
+                        displayArticle={displayArticle}
+
+                        setDisplayArticle={(articleLink) => {
+                            for(let i = 0; i < props.rssData.items.length; i++) {
+                                if(props.rssData.items[i].link == articleLink) {
+console.log(props.rssData.items[i].content);
+                                    setDisplayArticle(props.rssData.items[i].content);
+                                }
+                            }
+                        }}
+
+                        item={entry}
+                    ></FeedContainer>
                 </div>
             );
         });
@@ -54,6 +69,14 @@ function FeedScroller(props) {
                 currentLink={props.currentLink}
             >
             </ConditionalScroller>
+
+            {displayArticle.length &&
+                <div className="article_container">
+                    <article dangerouslySetInnerHTML={{ __html: displayArticle }}>
+
+                    </article>
+                </div>
+            }
         </div>
     );
 }

@@ -1,54 +1,57 @@
 
+
 import './FeedContainer.css';
 
 
 
 function FeedContainer(props) {
-    let rssImg = (
-        <div className="TEMPIMG"></div>
-    );
-
-    let imgsrc = 'images/rss_icon.png';
-
 
     return (
-        <a href={props.item.link} target="_blank" id="FeedContainer_Link">
-            <div id="FeedContainer_Base">
-                <div className="img_container">
+        <div id="FeedContainer_Base">
+            <div className="buttons_container">
+                <a href={props.item.link} target="_blank">
                     <img
-                        src={imgsrc}
-                        className="rss_img"
-                        alt="No Image"
+                        src="images/external_link_icon.png"
+                        className="external_link_icon"
+                        alt="Image Error"
                     />
-                </div>
+                </a>
 
-                <div id="info_container">
-                    {props.item.title &&
-                        <div className="detail_container">
-                            <b>Title:</b> {props.item.title}
-                        </div>
-                    }
+                <div
+                    className="read_button"
 
-                    {props.item.pubDate &&
-                        <div className="detail_container">
-                            <b>Published:</b> {props.item.pubDate}
-                        </div>
-                    }
-
-                    {props.item.author &&
-                        <div className="detail_container">
-                            <b>Author:</b> {props.item.author}
-                        </div>
-                    }
-
-                    {props.item.contentSnippet &&
-                        <div className="detail_container">
-                            <b>Snippet:</b> {props.item.contentSnippet}
-                        </div>
-                    }
+                    onClick={() => {
+                        props.setDisplayArticle(props.item.link);
+                    }}
+                >
+                    Read
                 </div>
             </div>
-        </a>
+
+            {props.item.title &&
+                <p>
+                    <b>Title:</b> {props.item.title}
+                </p>
+            }
+
+            {props.item.pubDate &&
+                <p>
+                    <b>Published:</b> {props.item.pubDate}
+                </p>
+            }
+
+            {props.item.author &&
+                <p>
+                    <b>Author:</b> {props.item.author}
+                </p>
+            }
+
+            {props.item.contentSnippet &&
+                <p>
+                    <b>Snippet:</b> {props.item.contentSnippet}
+                </p>
+            }
+        </div>
     );
 }
 
