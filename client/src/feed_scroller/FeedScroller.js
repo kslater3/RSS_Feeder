@@ -23,7 +23,7 @@ function ConditionalScroller(props) {
             }
 
             <div className="sidescroller">
-                {props.stubs.length ? props.stubs : <h1>WOW, Such Empty</h1>}
+                {props.stubs.length ? props.stubs : <h1>Select a Link Above</h1>}
             </div>
         </div>
     );
@@ -46,7 +46,6 @@ function FeedScroller(props) {
                         setDisplayArticle={(articleLink) => {
                             for(let i = 0; i < props.rssData.items.length; i++) {
                                 if(props.rssData.items[i].link == articleLink) {
-console.log(props.rssData.items[i].content);
                                     setDisplayArticle(props.rssData.items[i].content);
                                 }
                             }
@@ -70,12 +69,15 @@ console.log(props.rssData.items[i].content);
             >
             </ConditionalScroller>
 
-            {displayArticle.length &&
+            {displayArticle.length
+                ?
                 <div className="article_container">
                     <article dangerouslySetInnerHTML={{ __html: displayArticle }}>
 
                     </article>
                 </div>
+                :
+                <p>Select an Article Above</p>
             }
         </div>
     );

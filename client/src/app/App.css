@@ -34,7 +34,7 @@
 
 
 #logout_button {
-    width: 75px;
+    width: 100px;
     height: 45px;
 
     margin-left: 50px;
@@ -50,7 +50,7 @@
 }
 
 #logout_button:hover {
-    width: 78px;
+    width: 103px;
     height: 43px;
 
     background-color: #ccc;
@@ -76,6 +76,13 @@ link_error_p:empty {
     display: none;
 }
 
+
+.instructions_div {
+    width: 80%;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
 
 
 #feed_container {

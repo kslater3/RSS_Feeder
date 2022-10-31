@@ -58,14 +58,14 @@ function LinkScroller(props) {
                 return 0;
             }).map((record) => {
                 return (
-                    <div
+                    <button
                         className="domain_link"
                         onClick={() => {
                             props.setCurrentLink(record);
                         }}
                     >
                         {record.label}
-                    </div>
+                    </button>
                 );
             });
 
@@ -87,7 +87,7 @@ function LinkScroller(props) {
 
     return (
         <div id="LinkScroller_Base">
-            {linkComponents.length ? linkComponents : <h4>WOW, Such Empty</h4>}
+            {linkComponents.length ? linkComponents : <h4>Add a Link Above</h4>}
         </div>
     );
 }

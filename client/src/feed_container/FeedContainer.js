@@ -17,7 +17,7 @@ function FeedContainer(props) {
                     />
                 </a>
 
-                <div
+                <button
                     className="read_button"
 
                     onClick={() => {
@@ -25,7 +25,7 @@ function FeedContainer(props) {
                     }}
                 >
                     Read
-                </div>
+                </button>
             </div>
 
             {props.item.title &&

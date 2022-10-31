@@ -144,9 +144,13 @@ function App(props) {
                    setLinkInput('');
 
                    setFetchingLinkRecords(true);
+               }else {
+                   setBadLink(true);
                }
            }catch(e) {
                console.error(e);
+
+               setBadLink(true);
            }
 
 
@@ -209,12 +213,12 @@ function App(props) {
                     onClick={addLink}
                 />
 
-                <div
+                <button
                     id="logout_button"
                     onClick={logout}
                 >
                     Logout
-                </div>
+                </button>
             </div>
 
             <div id="link_error_container">
@@ -227,6 +231,10 @@ function App(props) {
 
 
             <div id="feed_container">
+                <div className="instructions_div">
+                    <b>Instructions:</b> Add Links up top. Select a Link. Click the Read button on an article. See the article at the bottom.
+                </div>
+
                 <div id="linkscroller_container">
                     <LinkScroller
                         linkRecords={linkRecords}
