@@ -16,12 +16,6 @@ function ConditionalScroller(props) {
 
     return(
         <div>
-            {props.currentLink &&
-                <div id="feed_title">
-                    <h2>{props.currentLink.label}</h2>
-                </div>
-            }
-
             <div className="sidescroller">
                 {props.stubs.length ? props.stubs : <h1>Select a Link Above</h1>}
             </div>
@@ -61,6 +55,28 @@ function FeedScroller(props) {
 
     return (
         <div id="FeedScroller_Base">
+            {(props.rssData && props.rssData.image && props.rssData.image.url)
+                ?
+                <div className="feed_img_container">
+                    <img
+                        src={props.rssData.image.url}
+                        alt="Image Error"
+                        className="feed_img"
+                    />
+                </div>
+                :
+                <div></div>
+            }
+
+            {props.currentLink
+                ?
+                <div className="feed_title">
+                    <h3>{props.currentLink.label}</h3>
+                </div>
+                :
+                <div></div>
+            }
+
             <ConditionalScroller
                 isLoading={props.loadingRSS}
                 stubs={stubs}

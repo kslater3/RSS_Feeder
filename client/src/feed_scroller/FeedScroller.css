@@ -4,11 +4,6 @@
 }
 
 
-#feed_title {
-    text-align: center;
-}
-
-
 #spinner {
     width: 100px;
     height: 100px;
@@ -26,6 +21,22 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+.feed_title {
+    text-align: center;
+}
+
+.feed_img_container {
+    display: flex;
+    justify-content: center;
+}
+
+.feed_img {
+    max-width: 200px;
+    max-height: 200px;
+}
+
 
 .sidescroller {
     max-height: 500px;
@@ -48,7 +59,7 @@
     max-width: 90%;
     max-height: 800px;
 
-    margin-top: 50px;
+    margin-top: 15px;
     margin-bottom: 50px;
 
     overflow: auto;

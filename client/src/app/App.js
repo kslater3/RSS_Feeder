@@ -166,6 +166,7 @@ function App(props) {
 
        if(tempRssData && tempRssData.items) {
            setRssData({...tempRssData});
+console.log(tempRssData);
        }
 
        setLoadingRSS(false);
@@ -249,7 +250,10 @@ function App(props) {
                 </div>
 
                 <div id="feedscroller_container">
-                    <FeedScroller rssData={rssData}></FeedScroller>
+                    <FeedScroller
+                        currentLink={currentLink}
+                        rssData={rssData}
+                    ></FeedScroller>
                 </div>
             </div>
         </div>
