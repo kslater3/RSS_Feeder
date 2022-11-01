@@ -166,7 +166,6 @@ function App(props) {
 
        if(tempRssData && tempRssData.items) {
            setRssData({...tempRssData});
-console.log(tempRssData);
        }
 
        setLoadingRSS(false);

@@ -299,8 +299,6 @@ app.post('/link/:uid', async (req, res) => {
         // If this link already was added, that is okay we will move on, if something else happend we will kill it
         // Postgres Error Code 23505 is for the Unique constraint meaning we already have that link, no problem
         if(e.code !== 23505) {
-            pgClient.release();
-
             console.error(e);
 
             res.sendStatus(403);
@@ -317,21 +315,14 @@ app.post('/link/:uid', async (req, res) => {
                     [link]
                 );
             }catch(e) {
-                // If this link already was added, that is okay we will move on, if something else happend we will kill it
-                // Postgres Error Code 23505 is for the Unique constraint meaning we already have that link, no problem
-                if(e.code !== 23505) {
-                    pgClient.release();
+                console.error(e);
 
-                    console.error(e);
+                res.sendStatus(403);
 
-                    res.sendStatus(403);
-
-                    return;
-                }
+                return;
             }
         }
 
-console.log(results);
         const newLink = results.rows[0];
 
         // Now that we know the new link is in the system, let's update the user's link table to associate that link to this user
@@ -341,8 +332,6 @@ console.log(results);
                 [newLink.id, req.params['uid']]
             );
         }catch(e) {
-            pgClient.release();
-
             console.error(e);
 
             res.sendStatus(403);
@@ -350,8 +339,6 @@ console.log(results);
             return;
         } finally {
             if (!results || results.rows.length === 0) {
-                pgClient.release();
-
                 res.sendStatus(403);
 
                 return;
