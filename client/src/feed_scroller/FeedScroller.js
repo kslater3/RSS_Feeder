@@ -28,6 +28,17 @@ function ConditionalScroller(props) {
 function FeedScroller(props) {
     const [displayArticle, setDisplayArticle] = useState('');
 
+    const [articleAudioURL, setArticleAudioURL] = useState('');
+    const [articleAudio, setArticleAudio] = useState(undefined);
+    const [isPaused, setIsPaused] = useState(true);
+
+
+    if(articleAudioURL && !articleAudio) {
+        let newAudio = new Audio(articleAudioURL);
+
+        setArticleAudio(newAudio);
+    }
+
     let stubs = [];
 
     if(props.rssData && props.rssData.items) {
@@ -37,12 +48,38 @@ function FeedScroller(props) {
                     <FeedContainer
                         displayArticle={displayArticle}
 
-                        setDisplayArticle={(articleLink) => {
+                        setDisplayArticle={(articleTitle) => {
+                            if(articleAudio) {
+                                articleAudio.pause();
+
+                                setArticleAudio(undefined);
+
+                                setArticleAudioURL('');
+
+                                setIsPaused(true);
+                            }
+
                             for(let i = 0; i < props.rssData.items.length; i++) {
-                                if(props.rssData.items[i].link == articleLink) {
+                                if(props.rssData.items[i].title == articleTitle) {
                                     setDisplayArticle(props.rssData.items[i].content);
+
+                                    if(props.rssData.items[i].enclosure && props.rssData.items[i].enclosure.type.toLowerCase().includes('audio')) {
+                                        try {
+                                            let newAudioURL = props.rssData.items[i].enclosure.url;
+
+                                            setArticleAudioURL(newAudioURL);
+                                        }catch(e) {
+                                            console.error(e);
+                                        }
+                                    }
+
+
+                                    return;
                                 }
                             }
+
+                            // If we didn't hit a match and return, then make the article empty
+                            setDisplayArticle('Article Not Found');
                         }}
 
                         item={entry}
@@ -58,11 +95,13 @@ function FeedScroller(props) {
             {(props.rssData && props.rssData.image && props.rssData.image.url)
                 ?
                 <div className="feed_img_container">
-                    <img
-                        src={props.rssData.image.url}
-                        alt="Image Error"
-                        className="feed_img"
-                    />
+                    <a href={props.rssData.image.link}>
+                        <img
+                            src={props.rssData.image.url}
+                            alt="Image Error"
+                            className="feed_img"
+                        />
+                    </a>
                 </div>
                 :
                 <div></div>
@@ -88,9 +127,42 @@ function FeedScroller(props) {
             {displayArticle.length
                 ?
                 <div className="article_container">
-                    <article dangerouslySetInnerHTML={{ __html: displayArticle }}>
+                    {articleAudio
+                        ?
+                            <div className="audio_button_container">
+                                {isPaused
+                                    ?
+                                    <img
+                                        src="images/play_icon.png"
+                                        className="audio_button"
+                                        onClick={() => {
+                                            articleAudio.play();
 
-                    </article>
+                                            setIsPaused(false);
+                                        }}
+                                        alt="Image Error"
+                                    />
+                                    :
+                                    <img
+                                        src="images/pause_icon.png"
+                                        className="audio_button"
+                                        onClick={() => {
+                                            articleAudio.pause();
+
+                                            setIsPaused(true);
+                                        }}
+                                        alt="Image Error"
+                                    />
+
+                                }
+                            </div>
+                        :
+                        <div></div>
+                    }
+
+                    <div dangerouslySetInnerHTML={{ __html: displayArticle }}>
+
+                    </div>
                 </div>
                 :
                 <p>Select an Article Above</p>

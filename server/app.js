@@ -298,7 +298,7 @@ app.post('/link/:uid', async (req, res) => {
     }catch(e) {
         // If this link already was added, that is okay we will move on, if something else happend we will kill it
         // Postgres Error Code 23505 is for the Unique constraint meaning we already have that link, no problem
-        if(e.code !== 23505) {
+        if(!(e.code == 23505)) {
             console.error(e);
 
             res.sendStatus(403);
@@ -332,11 +332,13 @@ app.post('/link/:uid', async (req, res) => {
                 [newLink.id, req.params['uid']]
             );
         }catch(e) {
-            console.error(e);
+            if(!(e.code == 23505)) {
+                console.error(e);
 
-            res.sendStatus(403);
+                res.sendStatus(403);
 
-            return;
+                return;
+            }
         } finally {
             if (!results || results.rows.length === 0) {
                 res.sendStatus(403);

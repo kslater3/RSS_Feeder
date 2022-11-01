@@ -21,7 +21,7 @@ function FeedContainer(props) {
                     className="read_button"
 
                     onClick={() => {
-                        props.setDisplayArticle(props.item.link);
+                        props.setDisplayArticle(props.item.title);
                     }}
                 >
                     Read

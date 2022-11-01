@@ -122,7 +122,7 @@ function App(props) {
 
        let rssResponse = await fetchRSS(linkInput);
 
-       if(rssResponse) {
+       if(rssResponse.ok) {
            try {
                let linkPost = await fetch('/link/' + user.id, {
                    method: 'POST',
@@ -152,8 +152,8 @@ function App(props) {
 
                setBadLink(true);
            }
-
-
+       }else {
+           setBadLink(true);
        }
    }
 
